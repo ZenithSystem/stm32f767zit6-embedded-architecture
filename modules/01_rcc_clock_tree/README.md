@@ -1,6 +1,6 @@
 # Modulo 01 — RCC & Clock Tree Configuration (216 MHz)
 
-## Obiettivo Ingegneristico
+## Configurazione
 Portare il system clock (`SYSCLK`) dell'STM32F767ZIT6 alla massima frequenza operativa di **216 MHz** partendo dall'oscillatore esterno da **8 MHz** fornito dall'ST-LINK su NUCLEO-F767ZI (`HSE Bypass`), configurando correttamente regolatore di tensione, Over-Drive Mode e Wait States della memoria Flash.
 
 ## Calcolo dei Divisori e Moltiplicatori PLL (RM0410 §5.3)
