@@ -1,0 +1,27 @@
+name: Embedded CI — Format & Static Checks
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  code-quality:
+    name: Check C Formatting (clang-format)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+
+      - name: Verify C/H formatting compliance
+        run: |
+          FILES=$(find modules -name '*.c' -o -name '*.h')
+          if [ -n "$FILES" ]; then
+            clang-format --dry-run --Werror $FILES
+          else
+            echo "No C/H source files found yet."
+          fi

@@ -1,0 +1,51 @@
+# Build directories
+build/
+build-*/
+Debug/
+Release/
+cmake-build-*/
+
+# Compiled binaries & object files
+*.o
+*.obj
+*.d
+*.elf
+*.bin
+*.hex
+*.srec
+*.map
+*.lst
+*.lss
+*.sym
+*.a
+*.lib
+
+# STM32CubeIDE / Eclipse artifacts
+.metadata/
+.settings/
+*.launch
+
+# Keil MDK-ARM
+*.uvguix.*
+*.uvoptx
+Listings/
+Objects/
+
+# IAR Embedded Workbench
+Debug/
+Release/
+settings/
+*.dep
+
+# VS Code local overrides
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/c_cpp_properties.json
+
+# OS & Editor temporary files
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.bak
