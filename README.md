@@ -28,9 +28,13 @@ Ogni modulo segue un approccio rigoroso da **Ingegneria Elettronica e Informatic
 
 ---
 
-## Memory Map & Bus Architecture
+## Block Diagram & Bus Matrix Architecture
 
-    +-----------------------------------------------------------------------+
+![STM32F767ZIT6 Block Diagram](docs/assets/stm32f767_block_diagram.png)
+
+*Architettura interna STM32F767xx: AHB Bus-Matrix 11S8M, memorie ITCM/DTCM/SRAM e domini di clock APB1/APB2 (Fonte: STMicroelectronics DS11532 Rev 9, Fig. 2).*
+
+-----------------------------------------------------------------------+
     |                         ARM Cortex-M7 Core                            |
     |   [ I-Cache 16KB ]         [ D-Cache 16KB ]        [ FPU FPv5-D16 ]   |
     +----------+------------------------+------------------------+----------+
