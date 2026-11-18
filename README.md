@@ -1,5 +1,14 @@
 # STM32F767ZIT6 — Bare-Metal & HAL Firmware
 
+![C](https://img.shields.io/badge/Language-C11-00599C?style=flat-square&logo=c&logoColor=white)
+![C++](https://img.shields.io/badge/Language-C%2B%2B-00599C?style=flat-square&logo=cplusplus&logoColor=white)
+![ARM](https://img.shields.io/badge/Architecture-ARM_Cortex--M-0091BD?style=flat-square&logo=arm&logoColor=white)
+![ARM Assembly](https://img.shields.io/badge/Low--Level-ARM_Assembly-374151?style=flat-square&logo=arm&logoColor=white)
+![STM32](https://img.shields.io/badge/MCU-STM32-03234B?style=flat-square&logo=stmicroelectronics&logoColor=white)
+![Arduino](https://img.shields.io/badge/Platform-Arduino-00878F?style=flat-square&logo=arduino&logoColor=white)
+![Bare-Metal](https://img.shields.io/badge/Firmware-Bare--Metal-B91C1C?style=flat-square)
+![GCC](https://img.shields.io/badge/Toolchain-ARM_GCC-A42E2B?style=flat-square&logo=gnu&logoColor=white)
+
 Driver a livello di registro (CMSIS) e implementazioni HAL per le periferiche del microcontrollore **STM32F767ZIT6** su scheda **NUCLEO-F767ZI**.
 
 ## Specifiche Hardware
