@@ -5,6 +5,7 @@
 ![ARM](https://img.shields.io/badge/Architecture-ARM_Cortex--M-0091BD?style=flat-square&logo=arm&logoColor=white)
 ![ARM Assembly](https://img.shields.io/badge/Low--Level-ARM_Assembly-374151?style=flat-square&logo=arm&logoColor=white)
 ![STM32](https://img.shields.io/badge/MCU-STM32-03234B?style=flat-square&logo=stmicroelectronics&logoColor=white)
+![Zephyr](https://img.shields.io/badge/RTOS-Zephyr-7829AD?style=flat-square&logo=zephyr&logoColor=white)
 ![Arduino](https://img.shields.io/badge/Platform-Arduino-00878F?style=flat-square&logo=arduino&logoColor=white)
 ![Bare-Metal](https://img.shields.io/badge/Firmware-Bare--Metal-B91C1C?style=flat-square)
 ![GCC](https://img.shields.io/badge/Toolchain-ARM_GCC-A42E2B?style=flat-square&logo=gnu&logoColor=white)
@@ -13,14 +14,23 @@
 
 Questo repository costituisce un punto di riferimento pratico e un ambiente di studio per comprendere l'architettura interna e il funzionamento delle periferiche del microcontrollore **STM32F767ZIT6** (ARM Cortex-M7) su scheda **NUCLEO-F767ZI**.
 
-Raccoglie esempi di codice autonomi e documentati dedicati alla gestione dell'hardware, all'inizializzazione delle periferiche, alla configurazione del clock e all'esecuzione deterministica:
+Raccoglie esempi di codice autonomi e documentati dedicati alla gestione dell'hardware, all'inizializzazione delle periferiche, al controllo deterministico dei tempi e alla prototipazione real-time su tre livelli di astrazione:
 
 * **Driver Bare-Metal (livello registro):** manipolazione diretta dei registri memory-mapped tramite puntatori `volatile`, ricavati dal Reference Manual ST (**RM0410**), senza livelli di astrazione intermedi.
 * **Controparti STM32 HAL (`*_hal.c`):** implementazioni parallele sviluppate con la libreria ufficiale **STM32CubeF7 HAL** per confrontare il controllo diretto dei registri con le API del produttore.
+* **Zephyr RTOS (Prototipazione Avionica):** sviluppo di applicazioni real-time multi-thread per la prototipazione di sottosistemi avionici (telemetria, acquisizione sensori inerziali/barometrici, bus di comunicazione e controllo deterministico).
 
 ## Architettura Hardware
 
 <img src="docs/assets/stm32f767_block_diagram.png" alt="STM32F767ZIT6 Block Diagram" width="850">
+
+## Zephyr RTOS — Prototipazione di Avionica
+
+La scheda **NUCLEO-F767ZI** (`nucleo_f767zi`) è supportata nativamente dall'ecosistema **Zephyr RTOS**, utilizzato in questo repository come ambiente per la prototipazione rapida e deterministica di firmware avionico:
+
+* **Scheduling Real-Time & Multi-Threading:** separazione deterministica dei task critici (loop di controllo assetto, fusione sensori IMU, telemetria, logging) tramite thread preemptive e cooperativi, timer kernel, semafori e message queue.
+* **Astrazione Hardware tramite DeviceTree (`.dts` / `.overlay`):** configurazione dichiarativa di pinout, bus **SPI**, **I2C**, **UART** e **CAN** disaccoppiata dal codice applicativo, facilitando il porting tra prototipi su scheda di sviluppo e hardware custom.
+* **Sottosistemi & Driver Integrati:** utilizzo nativo di `Sensor API`, ring buffer, gestione energetica e stack di comunicazione per sensori di volo (accelerometri, giroscopi, magnetometri, barometri) e collegamenti di telemetria.
 
 ## Struttura del Repository
 
@@ -28,6 +38,7 @@ Raccoglie esempi di codice autonomi e documentati dedicati alla gestione dell'ha
 | :--- | :--- | :--- |
 | `modules/01_rcc_clock_tree/` | Reset & Clock Control / Base Tempi | Abilitazione clock su bus (`AHB1ENR`), timer hardware `SysTick`, polling non-bloccante, `HAL_GetTick()` |
 | `modules/02_gpio_exti/` | General-Purpose I/O & Interrupt | Configurazione modalità pin (`MODER`), controllo uscite (`ODR`/`BSRR`), delay assembly `NOP`, GPIO HAL |
+| `zephyr_avionics/` | Zephyr RTOS & Prototipazione Avionica | Progetti `west`, overlay DeviceTree (`nucleo_f767zi`), thread real-time, acquisizione sensori e telemetria |
 | `common/` | Definizioni Condivise & Startup | Indirizzi base di memoria, linker script e definizioni hardware comuni |
 
 ## Esempi Implementati
@@ -43,6 +54,7 @@ Raccoglie esempi di codice autonomi e documentati dedicati alla gestione dell'ha
 
 ## Toolchain e Flusso di Lavoro
 
-* **Compilatore:** `arm-none-eabi-gcc` (`-std=c11`, `-mcpu=cortex-m7`, `-mthumb`)
+* **Compilatore Bare-Metal / HAL:** `arm-none-eabi-gcc` (`-std=c11`, `-mcpu=cortex-m7`, `-mthumb`)
+* **Build System RTOS:** `west` (Zephyr meta-tool, target `-b nucleo_f767zi`)
 * **Flashing e Debug:** `openocd` (interfaccia `stlink` e target `stm32f7x`)
 * **Formattazione Codice:** `clang-format` applicato localmente tramite hook Git `pre-commit` e verificato ad ogni push da GitHub Actions
