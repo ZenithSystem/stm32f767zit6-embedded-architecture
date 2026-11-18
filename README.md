@@ -1,4 +1,4 @@
-# STM32F767ZIT6 Embedded Architecture
+# STM32F767ZIT6 — Architettura Embedded & Firmware
 
 ![C](https://img.shields.io/badge/Language-C11-00599C?style=flat-square&logo=c&logoColor=white)
 ![C++](https://img.shields.io/badge/Language-C%2B%2B-00599C?style=flat-square&logo=cplusplus&logoColor=white)
@@ -9,29 +9,40 @@
 ![Bare-Metal](https://img.shields.io/badge/Firmware-Bare--Metal-B91C1C?style=flat-square)
 ![GCC](https://img.shields.io/badge/Toolchain-ARM_GCC-A42E2B?style=flat-square&logo=gnu&logoColor=white)
 
-## Overview
+## Panoramica
 
-This repository serves as a practical reference and learning workspace for studying the internal architecture and peripheral operation of the **STM32F767ZIT6** microcontroller (ARM Cortex-M7) on the **NUCLEO-F767ZI** board.
+Questo repository costituisce un punto di riferimento pratico e un ambiente di studio per comprendere l'architettura interna e il funzionamento delle periferiche del microcontrollore **STM32F767ZIT6** (ARM Cortex-M7) su scheda **NUCLEO-F767ZI**.
 
-It collects self-contained, documented code examples focused on hardware management, peripheral initialization, clock configuration, and deterministic execution:
+Raccoglie esempi di codice autonomi e documentati dedicati alla gestione dell'hardware, all'inizializzazione delle periferiche, alla configurazione del clock e all'esecuzione deterministica:
 
-* **Bare-Metal Drivers (Register-Level):** Direct manipulation of memory-mapped peripheral registers via `volatile` pointers, strictly derived from the ST Reference Manual (**RM0410**), with zero abstraction overhead.
-* **STM32 HAL Counterparts (`*_hal.c`):** Parallel reference implementations built with the official **STM32CubeF7 HAL** to compare direct register control against vendor driver APIs.
+* **Driver Bare-Metal (livello registro):** manipolazione diretta dei registri memory-mapped tramite puntatori `volatile`, ricavati dal Reference Manual ST (**RM0410**), senza livelli di astrazione intermedi.
+* **Controparti STM32 HAL (`*_hal.c`):** implementazioni parallele sviluppate con la libreria ufficiale **STM32CubeF7 HAL** per confrontare il controllo diretto dei registri con le API del produttore.
 
-## Hardware Architecture
+## Architettura Hardware
 
 <img src="docs/assets/stm32f767_block_diagram.png" alt="STM32F767ZIT6 Block Diagram" width="850">
 
-## Repository Structure
+## Struttura del Repository
 
-| Path | Scope | Key Topics |
+| Percorso | Ambito | Argomenti Principali |
 | :--- | :--- | :--- |
-| `modules/01_rcc_clock_tree/` | Reset & Clock Control / Timebase | Bus clock gating (`AHB1ENR`), SysTick hardware timer, non-blocking polling, `HAL_GetTick()` |
-| `modules/02_gpio_exti/` | General-Purpose I/O & Interrupts | Pin mode configuration (`MODER`), output control (`ODR`/`BSRR`), NOP assembly delays, HAL GPIO |
-| `common/` | Shared Definitions & Startup | Base memory addresses, linker scripts, and common hardware definitions |
+| `modules/01_rcc_clock_tree/` | Reset & Clock Control / Base Tempi | Abilitazione clock su bus (`AHB1ENR`), timer hardware `SysTick`, polling non-bloccante, `HAL_GetTick()` |
+| `modules/02_gpio_exti/` | General-Purpose I/O & Interrupt | Configurazione modalità pin (`MODER`), controllo uscite (`ODR`/`BSRR`), delay assembly `NOP`, GPIO HAL |
+| `common/` | Definizioni Condivise & Startup | Indirizzi base di memoria, linker script e definizioni hardware comuni |
 
-## Toolchain & Workflow
+## Esempi Implementati
 
-* **Compiler:** `arm-none-eabi-gcc` (`-std=c11`, `-mcpu=cortex-m7`, `-mthumb`)
-* **Flashing & Debug:** `openocd` (`stlink` interface + `stm32f7x` target)
-* **Code Formatting:** `clang-format` enforced locally via Git `pre-commit` hook and verified on every push by GitHub Actions
+| File | Approccio | Descrizione |
+| :--- | :--- | :--- |
+| `modules/02_gpio_exti/01_led_blink.c` | Bare-Metal | Blink bloccante del LED LD1 (`PB0`) tramite registri `RCC_AHB1ENR`, `GPIOB_MODER` e `GPIOB_ODR` |
+| `modules/02_gpio_exti/01_led_blink_hal.c` | STM32 HAL | Controparte HAL con `HAL_GPIO_TogglePin()` e `HAL_Delay()` |
+| `modules/02_gpio_exti/02_led_blink_nop.c` | Bare-Metal + Assembly | Temporizzazione tramite istruzione inline assembly `__asm__ volatile ("nop")` |
+| `modules/02_gpio_exti/02_led_blink_nop_hal.c` | STM32 HAL + Assembly | Inizializzazione GPIO via HAL e ciclo di attesa deterministico con istruzione `NOP` |
+| `modules/01_rcc_clock_tree/03_led_blink_nonblocking.c` | Bare-Metal | Base tempi non-bloccante a 1 ms tramite polling su `SYST_CSR_COUNTFLAG` del timer `SysTick` |
+| `modules/01_rcc_clock_tree/03_led_blink_nonblocking_hal.c` | STM32 HAL | Base tempi non-bloccante tramite `HAL_GetTick()` e interrupt `SysTick_Handler()` |
+
+## Toolchain e Flusso di Lavoro
+
+* **Compilatore:** `arm-none-eabi-gcc` (`-std=c11`, `-mcpu=cortex-m7`, `-mthumb`)
+* **Flashing e Debug:** `openocd` (interfaccia `stlink` e target `stm32f7x`)
+* **Formattazione Codice:** `clang-format` applicato localmente tramite hook Git `pre-commit` e verificato ad ogni push da GitHub Actions
